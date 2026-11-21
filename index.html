@@ -1,37 +1,268 @@
 <!doctype html>
-<html lang="zh">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Klang Hock Li · Tyres & Rims</title>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f47a00">
+<title>Klang Hock Li</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{font-family:system-ui,-apple-system,sans-serif;color:#222;background:#f5f5f5}*{box-sizing:border-box}body{margin:0}header{background:#ed7400;color:white;padding:20px 16px}header h1{margin:0;font-size:24px}header small{opacity:.9}nav{display:flex;overflow:auto;background:white;position:sticky;top:0;box-shadow:0 2px 8px #0001}nav button{flex:1;min-width:85px;border:0;background:white;padding:15px 7px;font-weight:650;color:#555}nav button.active{color:#e76d00;border-bottom:3px solid #e76d00}main{max-width:900px;margin:auto;padding:16px}.panel{display:none}.panel.active{display:block}.card{background:white;border-radius:12px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #0000000a}h2{font-size:20px;margin:5px 0 14px}label{display:block;margin:12px 0 5px;font-size:14px;font-weight:600}input,select,textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;font-size:16px}button.action,.link{display:inline-block;background:#ed7400;color:white;border:0;border-radius:8px;padding:11px 16px;margin:10px 6px 0 0;text-decoration:none;font-size:15px;cursor:pointer}.secondary{background:#555!important}.danger{background:#a33!important}.item{border-top:1px solid #eee;padding:12px 0}.muted{color:#777;font-size:13px}.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}.amount{font-weight:700;color:#d76400}.pill{background:#fff1e4;border-radius:20px;padding:4px 9px;font-size:12px}.empty{color:#777;padding:20px 0}footer{text-align:center;padding:20px;color:#888;font-size:12px}
-</style></head><body>
-<header><h1>🛞 Klang Hock Li</h1><small>Tyre & Wheel Management · 第一版</small></header>
-<nav id="tabs"><button class="active" data-tab="search">Search</button><button data-tab="stock">Stock</button><button data-tab="quote">Quote</button><button data-tab="customer">Customer</button><button data-tab="commission">Commission</button></nav>
-<main>
-<section id="search" class="panel active"><div class="card"><h2>🔎 搜索轮胎与轮毂</h2><input id="searchTerm" placeholder="尺寸、品牌或花纹，例如 235/50R18、PS5"><div id="searchResults"></div></div></section>
-<section id="stock" class="panel"><div class="card"><h2>📦 添加轮胎 / 轮毂库存</h2><form id="stockForm"><label>产品照片（可从相簿选择或拍照）</label><input id="productPhoto" type="file" accept="image/*"><label>品牌</label><input name="brand" required placeholder="Michelin / BBS / Enkei"><label>花纹 / 型号</label><input name="model" required placeholder="Pilot Sport 5"><label>尺寸</label><input name="size" required placeholder="235/50R18 / 18x8.5J"><div class="row"><div><label>数量</label><input name="qty" type="number" min="0" required value="4"></div><div><label>售价 RM / 条</label><input name="price" type="number" min="0" step=".01" required></div></div><div class="row"><div><label>成本 RM / 条</label><input name="cost" type="number" min="0" step=".01" required></div><div><label>备注</label><input name="note" placeholder="Runflat / MO / DOT"></div></div><button class="action" type="submit">保存库存</button></form></div><div class="card"><h2>库存列表</h2><div id="stockList"></div></div></section>
-<section id="quote" class="panel"><div class="card"><h2>🧾 创建报价</h2><form id="quoteForm"><label>顾客姓名</label><input name="customer" required placeholder="Customer name"><label>车牌号码</label><input name="plate" placeholder="ABC 1234"><label>选择轮胎</label><select name="stockId" id="quoteStock" required></select><div class="row"><div><label>数量</label><input name="qty" type="number" min="1" value="4" required></div><div><label>安装 / 其他收费 RM</label><input name="extra" type="number" min="0" step=".01" value="0"></div></div><label>负责员工</label><input name="staff" value="Jordan Lim" required><button class="action" type="submit">生成报价</button></form><div id="quotePreview"></div></div><div class="card"><h2>历史报价</h2><div id="quoteList"></div></div></section>
-<section id="customer" class="panel"><div class="card"><h2>👤 顾客资料</h2><form id="customerForm"><label>姓名</label><input name="name" required><label>电话</label><input name="phone" type="tel" required><label>车牌</label><input name="plate"><label>备注</label><textarea name="note" rows="2"></textarea><button class="action" type="submit">保存顾客</button></form></div><div class="card"><h2>顾客列表</h2><input id="customerSearch" placeholder="搜索姓名、电话或车牌"><div id="customerList"></div></div></section>
-<section id="commission" class="panel"><div class="card"><h2>💰 佣金统计</h2><p class="muted">默认按每张报价的估计毛利 × 10% 计算；只有标记“已成交”的报价才计入。</p><label>佣金比例 (%)</label><input id="rate" type="number" min="0" max="100" step=".1" value="10"><div id="commissionList"></div></div></section>
-<div class="card"><h2>📲 联系我们</h2><p>Jordan Lim · 019-689 8559</p><a class="link" href="https://wa.me/60196898559" target="_blank" rel="noopener">WhatsApp 联系</a><button class="action secondary" id="export">备份数据 JSON</button><label>导入备份 JSON</label><input id="import" type="file" accept=".json,application/json"><p class="muted">数据暂存于当前浏览器。清除浏览器数据可能导致记录消失；请定期备份。不同手机或电脑不会自动同步。</p></div>
-</main><footer>© Klang Hock Li · Prototype v2 · Offline-first</footer>
+:root{--o:#f47a00;--ink:#171717;--muted:#6b7280;--bg:#f5f6f8;--card:#fff;--line:#e5e7eb;--bad:#b42318;--good:#067647}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}.hidden{display:none!important}
+.top{background:var(--o);color:#fff;padding:18px 16px}.top h1{margin:0;font-size:25px}.top p{margin:4px 0 0;opacity:.92}
+.wrap{max-width:980px;margin:auto;padding:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #00000008}
+.login-shell{min-height:100vh;background:#111;display:grid;place-items:center;padding:20px}.login-card{width:min(100%,460px);background:#fff;border-radius:22px;padding:26px}
+.login-card h1{font-size:34px;margin:0 0 8px}.login-card p{color:#666;margin:0 0 22px;line-height:1.45}
+label{display:block;font-weight:700;margin:12px 0 6px}input,select,textarea{width:100%;border:1px solid #cfd3d8;border-radius:10px;padding:12px;background:#fff}
+.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:750;cursor:pointer}.primary{background:var(--o);color:#fff}.dark{background:#111;color:#fff}.soft{background:#eef0f3;color:#222}.danger{background:#fee4e2;color:#b42318}.full{width:100%}
+.nav{display:flex;gap:6px;overflow:auto;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;padding:8px}.nav button{white-space:nowrap;border:0;background:#fff;padding:10px 12px;border-radius:9px;font-weight:700}.nav button.active{background:#fff0e2;color:#c65c00}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}.product{overflow:hidden}.product img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;background:#eee}.product h3{margin:10px 0 3px}.price{font-size:20px;font-weight:800;color:#d45f00}.muted{color:var(--muted)}.small{font-size:13px}.row{display:flex;gap:10px;align-items:center}.row>*{flex:1}.split{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.pill{display:inline-block;padding:4px 9px;background:#f1f3f5;border-radius:999px;font-size:12px}.ok{color:var(--good)}.err{color:var(--bad)}
+.tabs{display:flex;gap:6px;overflow:auto;margin:10px 0}.tabs button{border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:999px}.tabs button.on{background:var(--ink);color:#fff}
+.table{width:100%;border-collapse:collapse;font-size:14px}.table th,.table td{text-align:left;border-bottom:1px solid var(--line);padding:9px 6px;vertical-align:top}.scroll{overflow:auto}
+.notice{padding:10px 12px;border-radius:10px;background:#fff5e8;color:#874600}.status{min-height:20px;margin-top:8px}.hero-actions{display:flex;gap:8px;flex-wrap:wrap}.search{font-size:16px}
+@media(max-width:600px){.row{display:block}.top h1{font-size:23px}.wrap{padding:10px}.login-card{padding:22px}}
+</style>
+</head>
+<body>
+
+<section id="loginView" class="login-shell">
+  <div class="login-card">
+    <h1>Login</h1>
+    <p>Klang Hock Li 产品查看 / Staff access</p>
+    <form id="loginForm">
+      <label>Login ID</label>
+      <input id="loginId" autocomplete="username" placeholder="Hockli" required>
+      <label>Password</label>
+      <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required>
+      <button class="btn dark full" type="submit">Continue</button>
+      <div id="loginStatus" class="status small"></div>
+    </form>
+  </div>
+</section>
+
+<section id="appView" class="hidden">
+  <header class="top">
+    <div class="split">
+      <div><h1>🛞 Klang Hock Li</h1><p>Tyres · Rims · Services</p></div>
+      <div class="hero-actions"><span id="roleBadge" class="pill"></span><button id="logoutBtn" class="btn dark">Logout</button></div>
+    </div>
+  </header>
+  <nav id="nav" class="nav">
+    <button data-page="catalog" class="active">Products</button>
+    <button data-page="manage" data-role="staff">Products Admin</button>
+    <button data-page="customers" data-role="staff">Customers</button>
+    <button data-page="quotes" data-role="staff">Quotes</button>
+    <button data-page="sales" data-role="staff">Sales & Commission</button>
+  </nav>
+
+  <main class="wrap">
+    <section id="page-catalog">
+      <div class="card">
+        <div class="split"><h2 style="margin:0">产品 / Products</h2><a id="waTop" class="btn primary" href="https://wa.me/60196898559" target="_blank" rel="noopener">WhatsApp Jordan</a></div>
+        <div class="tabs">
+          <button class="on" data-cat="all">All</button><button data-cat="tyre">Tyres</button><button data-cat="rim">Rims</button><button data-cat="accessory">Accessories</button><button data-cat="service">Services</button>
+        </div>
+        <input id="productSearch" class="search" placeholder="Search brand, model or size...">
+      </div>
+      <div id="catalogGrid" class="grid"></div>
+      <div id="catalogEmpty" class="card muted hidden">目前还没有产品。/ No products yet.</div>
+    </section>
+
+    <section id="page-manage" class="hidden">
+      <div class="card">
+        <h2>产品管理</h2>
+        <form id="productForm">
+          <input type="hidden" id="productId">
+          <div class="row">
+            <div><label>Category</label><select id="pCategory"><option value="tyre">Tyre</option><option value="rim">Rim</option><option value="accessory">Accessory</option><option value="service">Service</option></select></div>
+            <div><label>Brand</label><input id="pBrand" required placeholder="Michelin"></div>
+          </div>
+          <div class="row"><div><label>Model</label><input id="pModel" placeholder="Pilot Sport 5"></div><div><label>Size</label><input id="pSize" placeholder="235/50R18"></div></div>
+          <div class="row"><div><label>Selling price RM</label><input id="pPrice" type="number" min="0" step=".01" required></div><div><label>Photo</label><input id="pPhoto" type="file" accept="image/*"></div></div>
+          <label>Description</label><textarea id="pDesc" rows="2"></textarea>
+          <div class="row"><div><label>Stock Qty</label><input id="pQty" type="number" min="0" value="0"></div><div><label>Cost RM</label><input id="pCost" type="number" min="0" step=".01" value="0"></div></div>
+          <div class="hero-actions"><button class="btn primary" type="submit">Save product</button><button class="btn soft" id="productReset" type="button">Clear</button></div>
+          <div id="productStatus" class="status small"></div>
+        </form>
+      </div>
+      <div class="card scroll"><table class="table"><thead><tr><th>Product</th><th>Price</th><th>Stock</th><th>Cost</th><th></th></tr></thead><tbody id="productRows"></tbody></table></div>
+    </section>
+
+    <section id="page-customers" class="hidden">
+      <div class="card"><h2>Customers</h2>
+        <form id="customerForm">
+          <div class="row"><div><label>Name</label><input id="cName" required></div><div><label>Phone</label><input id="cPhone"></div></div>
+          <div class="row"><div><label>Plate</label><input id="cPlate"></div><div><label>Vehicle</label><input id="cVehicle"></div></div>
+          <label>Notes</label><textarea id="cNotes" rows="2"></textarea>
+          <button class="btn primary">Save customer</button><div id="customerStatus" class="status small"></div>
+        </form>
+      </div>
+      <div class="card scroll"><table class="table"><thead><tr><th>Name</th><th>Phone</th><th>Plate / Vehicle</th></tr></thead><tbody id="customerRows"></tbody></table></div>
+    </section>
+
+    <section id="page-quotes" class="hidden">
+      <div class="card"><h2>Quick Quote</h2>
+        <form id="quoteForm">
+          <label>Customer</label><select id="qCustomer"></select>
+          <label>Product</label><select id="qProduct"></select>
+          <div class="row"><div><label>Qty</label><input id="qQty" type="number" min="1" value="4"></div><div><label>Extra RM</label><input id="qExtra" type="number" min="0" step=".01" value="0"></div></div>
+          <button class="btn primary">Create quote</button><div id="quoteStatus" class="status small"></div>
+        </form>
+      </div>
+      <div class="card scroll"><table class="table"><thead><tr><th>Customer</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody id="quoteRows"></tbody></table></div>
+    </section>
+
+    <section id="page-sales" class="hidden">
+      <div class="card"><div class="split"><h2 style="margin:0">Sales & Commission</h2><button class="btn soft" id="refreshSales">Refresh</button></div>
+      <p class="muted small">Staff sees own sales. Admin can see all sales.</p></div>
+      <div class="card scroll"><table class="table"><thead><tr><th>Date</th><th>Total</th><th>Profit</th><th>Commission</th></tr></thead><tbody id="salesRows"></tbody></table></div>
+    </section>
+  </main>
+</section>
+
 <script>
-const KEY='khl-app-v1';
-let db;try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-if(!db||!Array.isArray(db.stock))db={stock:[],customers:[],quotes:[],rate:10};
-db.customers??=[];db.quotes??=[];db.rate??=10;
-const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),money=n=>'RM '+Number(n||0).toFixed(2),save=()=>{localStorage.setItem(KEY,JSON.stringify(db));render()},id=()=>String(Date.now())+Math.random().toString(36).slice(2,6),form=f=>Object.fromEntries(new FormData(f).entries());
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab],.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active')});
-$('#stockForm').onsubmit=async e=>{e.preventDefault();let x=form(e.target);let file=$('#productPhoto').files[0];if(file&&file.size>1500000){alert('照片太大，请选择小于 1.5MB 的图片');return}let photo='';if(file){photo=await new Promise(resolve=>{let reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.readAsDataURL(file)})}db.stock.push({...x,id:id(),photo,qty:+x.qty,price:+x.price,cost:+x.cost});e.target.reset();try{save()}catch(err){db.stock.pop();alert('储存空间不足，请使用较小的照片')}};
-$('#customerForm').onsubmit=e=>{e.preventDefault();db.customers.push({...form(e.target),id:id()});e.target.reset();save()};
-$('#quoteForm').onsubmit=e=>{e.preventDefault();let x=form(e.target),s=db.stock.find(t=>t.id===x.stockId);if(!s)return alert('请先添加库存');if(+x.qty>s.qty&&!confirm('报价数量超过现有库存，仍然继续？'))return;let q={...x,id:id(),qty:+x.qty,extra:+x.extra,unitPrice:s.price,unitCost:s.cost,item:[s.brand,s.model,s.size].join(' '),date:new Date().toLocaleString(),sold:false};db.quotes.unshift(q);save();preview(q);};
-function preview(q){let total=q.qty*q.unitPrice+q.extra;$('#quotePreview').innerHTML=`<div class="card"><h2>Quotation</h2><p><b>Klang Hock Li</b></p><p>Customer: ${esc(q.customer)}<br>Plate: ${esc(q.plate)}<br>Date: ${esc(q.date)}</p><p>${esc(q.item)}<br>${q.qty} × ${money(q.unitPrice)}<br>Others: ${money(q.extra)}</p><h2>Total: ${money(total)}</h2><p>Sales: ${esc(q.staff)}</p><p>Jordan Lim · 019-689 8559</p><button class="action" onclick="window.print()">打印 / 保存 PDF</button><a class="link" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('Klang Hock Li Quotation\n'+q.item+'\n'+q.qty+' x '+money(q.unitPrice)+'\nOthers: '+money(q.extra)+'\nTotal: '+money(total)+'\nContact: 019-689 8559')}">分享 WhatsApp</a></div>`}
-window.removeItem=(type,uid)=>{if(confirm('确定删除？')){db[type]=db[type].filter(x=>x.id!==uid);save()}};
-window.markSold=uid=>{let q=db.quotes.find(x=>x.id===uid);if(!q)return;if(!q.sold){let s=db.stock.find(x=>x.id===q.stockId);if(s){if(s.qty<q.qty&&!confirm('库存不足，仍要确认成交并扣库存？'))return;s.qty-=q.qty;}q.sold=true}else{if(!confirm('取消成交状态？库存将恢复（如商品仍存在）。'))return;let s=db.stock.find(x=>x.id===q.stockId);if(s)s.qty+=q.qty;q.sold=false}save()};
-function render(){let term=$('#searchTerm').value.toLowerCase(),stocks=db.stock.filter(x=>(x.brand+' '+x.model+' '+x.size+' '+x.note).toLowerCase().includes(term));let card=s=>`<div class="item">${s.photo?`<img src="${s.photo}" alt="产品照片" style="width:110px;height:90px;object-fit:cover;border-radius:8px;float:right">`:``}<b>${esc(s.brand)} ${esc(s.model)}</b><br>${esc(s.size)} <span class="pill">剩余 ${s.qty}</span><br><span class="amount">${money(s.price)} / 条</span><br><span class="muted">${esc(s.note)}</span></div>`;$('#searchResults').innerHTML=stocks.map(card).join('')||'<div class="empty">没有匹配库存</div>';$('#stockList').innerHTML=db.stock.map(s=>card(s)+`<button class="action danger" onclick="removeItem('stock','${s.id}')">删除</button>`).join('')||'<div class="empty">还没有库存，请先添加。</div>';$('#quoteStock').innerHTML=db.stock.map(s=>`<option value="${s.id}">${esc(s.brand+' '+s.model+' '+s.size)} — ${money(s.price)} (${s.qty})</option>`).join('');$('#quoteList').innerHTML=db.quotes.map(q=>`<div class="item"><b>${esc(q.customer)}</b> · ${esc(q.date)}<br>${esc(q.item)} × ${q.qty}<br><b>${money(q.qty*q.unitPrice+q.extra)}</b> · ${esc(q.staff)} · ${q.sold?'已成交':'未成交'}<br><button class="action" onclick="showQuote('${q.id}')">查看</button><button class="action secondary" onclick="markSold('${q.id}')">${q.sold?'取消成交':'标记已成交'}</button><button class="action danger" onclick="removeItem('quotes','${q.id}')">删除</button></div>`).join('')||'<div class="empty">暂无报价</div>';let ct=$('#customerSearch').value.toLowerCase();$('#customerList').innerHTML=db.customers.filter(c=>(c.name+' '+c.phone+' '+c.plate).toLowerCase().includes(ct)).map(c=>`<div class="item"><b>${esc(c.name)}</b><br>${esc(c.phone)} · ${esc(c.plate)}<br><span class="muted">${esc(c.note)}</span><br><button class="action danger" onclick="removeItem('customers','${c.id}')">删除</button></div>`).join('')||'<div class="empty">暂无顾客</div>';$('#rate').value=db.rate;let totals={};db.quotes.filter(q=>q.sold).forEach(q=>{let profit=q.qty*(q.unitPrice-q.unitCost)+q.extra;totals[q.staff]=(totals[q.staff]||0)+profit*db.rate/100});$('#commissionList').innerHTML=Object.entries(totals).map(([name,amt])=>`<div class="item"><b>${esc(name)}</b><br><span class="amount">${money(amt)}</span></div>`).join('')||'<div class="empty">暂无已成交报价</div>'}
-window.showQuote=uid=>{let q=db.quotes.find(x=>x.id===uid);if(q){document.querySelector('[data-tab="quote"]').click();preview(q);$('#quotePreview').scrollIntoView({behavior:'smooth'})}};
-$('#searchTerm').oninput=render;$('#customerSearch').oninput=render;$('#rate').onchange=e=>{db.rate=+e.target.value;save()};
-$('#export').onclick=()=>{let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));a.href=u;a.download='klang-hock-li-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)};
-$('#import').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let data=JSON.parse(await f.text());if(!Array.isArray(data.stock)||!Array.isArray(data.customers)||!Array.isArray(data.quotes))throw Error('格式不正确');if(confirm('导入将覆盖当前所有数据，确定？')){db=data;save()}}catch(err){alert('导入失败：'+err.message)}e.target.value=''};
-render();
-</script></body></html>
+const SUPABASE_URL = 'https://wkjkiunujemwbxjtrddq.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_fuRkyrKByPZE_YV-A35ipw_hnVMF4ZY';
+const HOCKLI_AUTH_EMAIL = 'jordanlim_9689@yahoo.com';
+const CONTACT_WHATSAPP = '60196898559';
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+});
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => 'RM ' + Number(n||0).toFixed(2);
+let currentUser=null,currentProfile=null,products=[],inventory=[],customers=[],quotes=[],activeCategory='all';
+
+function status(el,msg,bad=false){el.textContent=msg;el.className='status small '+(bad?'err':'ok')}
+function authEmailFromId(id){const v=id.trim();return v.toLowerCase()==='hockli'?HOCKLI_AUTH_EMAIL:(v.includes('@')?v:'');}
+async function signIn(loginId,password){
+  const email=authEmailFromId(loginId); if(!email) throw new Error('Login ID not recognized');
+  const {data,error}=await sb.auth.signInWithPassword({email,password}); if(error) throw error; return data;
+}
+async function getProfile(){
+  const {data,error}=await sb.from('profiles').select('id,display_name,role,active,whatsapp').eq('id',currentUser.id).single();
+  if(error) throw error; if(!data.active) throw new Error('Account disabled'); currentProfile=data;
+}
+function setRoleUI(){
+  $('#roleBadge').textContent=(currentProfile.role||'viewer').toUpperCase();
+  $$('[data-role="staff"]').forEach(el=>el.classList.toggle('hidden',!['staff','admin'].includes(currentProfile.role)));
+}
+function showApp(){ $('#loginView').classList.add('hidden');$('#appView').classList.remove('hidden');setRoleUI();showPage('catalog'); }
+function showLogin(){ $('#appView').classList.add('hidden');$('#loginView').classList.remove('hidden'); }
+function showPage(name){
+  ['catalog','manage','customers','quotes','sales'].forEach(n=>$('#page-'+n).classList.toggle('hidden',n!==name));
+  $$('#nav [data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
+  if(name==='catalog') loadCatalog();
+  if(name==='manage') loadManagement();
+  if(name==='customers') loadCustomers();
+  if(name==='quotes') loadQuotes();
+  if(name==='sales') loadSales();
+}
+$('#loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();status($('#loginStatus'),'Signing in...');
+  try{await signIn($('#loginId').value,$('#loginPassword').value);const {data}=await sb.auth.getUser();currentUser=data.user;await getProfile();showApp();}
+  catch(err){status($('#loginStatus'),err.message||'Login failed',true)}
+});
+$('#logoutBtn').onclick=async()=>{await sb.auth.signOut();currentUser=currentProfile=null;$('#loginPassword').value='';showLogin()};
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b)showPage(b.dataset.page)});
+$$('.tabs [data-cat]').forEach(b=>b.onclick=()=>{$$('.tabs [data-cat]').forEach(x=>x.classList.remove('on'));b.classList.add('on');activeCategory=b.dataset.cat;renderCatalog()});
+$('#productSearch').oninput=renderCatalog;
+
+async function signedImage(path){
+  if(!path)return '';
+  const {data,error}=await sb.storage.from('product-images').createSignedUrl(path,3600);
+  return error?'':data.signedUrl;
+}
+async function loadCatalog(){
+  const {data,error}=await sb.from('products').select('id,category,brand,model,size,price,description,image_path,active,sort_order').eq('active',true).order('sort_order').order('created_at',{ascending:false});
+  if(error){$('#catalogGrid').innerHTML='<div class="card err">'+esc(error.message)+'</div>';return}
+  products=data||[];
+  await Promise.all(products.map(async p=>p._img=await signedImage(p.image_path)));
+  renderCatalog();
+}
+function renderCatalog(){
+  const q=$('#productSearch').value.trim().toLowerCase();
+  const list=products.filter(p=>(activeCategory==='all'||p.category===activeCategory)&&(`${p.brand} ${p.model||''} ${p.size||''} ${p.description||''}`).toLowerCase().includes(q));
+  $('#catalogEmpty').classList.toggle('hidden',list.length>0);
+  $('#catalogGrid').innerHTML=list.map(p=>`<article class="card product">
+    ${p._img?`<img src="${p._img}" alt="${esc(p.brand+' '+(p.model||''))}">`:`<div style="aspect-ratio:4/3;background:#eee;border-radius:12px;display:grid;place-items:center">No photo</div>`}
+    <span class="pill">${esc(p.category)}</span><h3>${esc(p.brand)} ${esc(p.model||'')}</h3><div class="muted">${esc(p.size||'')}</div>
+    <div class="price">${money(p.price)}</div><p class="small">${esc(p.description||'')}</p>
+    <a class="btn primary" target="_blank" rel="noopener" href="https://wa.me/${CONTACT_WHATSAPP}?text=${encodeURIComponent('Hi Jordan, I am interested in '+p.brand+' '+(p.model||'')+' '+(p.size||''))}">WhatsApp enquiry</a>
+  </article>`).join('');
+}
+
+async function loadManagement(){
+  if(!['staff','admin'].includes(currentProfile.role))return;
+  const [pr,ir]=await Promise.all([sb.from('products').select('*').order('created_at',{ascending:false}),sb.from('inventory').select('*')]);
+  if(pr.error)return status($('#productStatus'),pr.error.message,true);
+  products=pr.data||[];inventory=ir.data||[];renderProductRows();
+}
+function invFor(id){return inventory.find(x=>x.product_id===id)||{quantity:0,cost:0}}
+function renderProductRows(){
+  $('#productRows').innerHTML=products.map(p=>{const i=invFor(p.id);return `<tr><td><b>${esc(p.brand)} ${esc(p.model||'')}</b><br><span class="muted">${esc(p.size||'')}</span></td><td>${money(p.price)}</td><td>${i.quantity}</td><td>${money(i.cost)}</td><td><button class="btn soft" onclick="editProduct('${p.id}')">Edit</button></td></tr>`}).join('');
+}
+window.editProduct=id=>{const p=products.find(x=>x.id===id),i=invFor(id);if(!p)return;$('#productId').value=p.id;$('#pCategory').value=p.category;$('#pBrand').value=p.brand;$('#pModel').value=p.model||'';$('#pSize').value=p.size||'';$('#pPrice').value=p.price;$('#pDesc').value=p.description||'';$('#pQty').value=i.quantity;$('#pCost').value=i.cost;window.scrollTo({top:0,behavior:'smooth'})}
+$('#productReset').onclick=()=>{$('#productForm').reset();$('#productId').value='';$('#pQty').value=0;$('#pCost').value=0};
+$('#productForm').addEventListener('submit',async e=>{
+  e.preventDefault();status($('#productStatus'),'Saving...');
+  try{
+    let id=$('#productId').value||crypto.randomUUID(),image_path=null;
+    const old=products.find(x=>x.id===id); if(old)image_path=old.image_path;
+    const file=$('#pPhoto').files[0];
+    if(file){
+      const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_'),path=`${currentUser.id}/${id}-${Date.now()}-${safe}`;
+      const up=await sb.storage.from('product-images').upload(path,file,{upsert:false}); if(up.error)throw up.error; image_path=path;
+    }
+    const row={id,category:$('#pCategory').value,brand:$('#pBrand').value.trim(),model:$('#pModel').value.trim()||null,size:$('#pSize').value.trim()||null,price:+$('#pPrice').value||0,description:$('#pDesc').value.trim()||null,image_path,created_by:currentUser.id,active:true};
+    const pr=await sb.from('products').upsert(row,{onConflict:'id'});if(pr.error)throw pr.error;
+    const ir=await sb.from('inventory').upsert({product_id:id,quantity:+$('#pQty').value||0,cost:+$('#pCost').value||0,updated_by:currentUser.id},{onConflict:'product_id'});if(ir.error)throw ir.error;
+    status($('#productStatus'),'Saved');$('#productReset').click();await loadManagement();
+  }catch(err){status($('#productStatus'),err.message,true)}
+});
+
+async function loadCustomers(){
+  const {data,error}=await sb.from('customers').select('*').order('created_at',{ascending:false});if(error)return status($('#customerStatus'),error.message,true);
+  customers=data||[];$('#customerRows').innerHTML=customers.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.phone||'')}</td><td>${esc(c.plate||'')}<br><span class="muted">${esc(c.vehicle||'')}</span></td></tr>`).join('');
+}
+$('#customerForm').addEventListener('submit',async e=>{e.preventDefault();const {error}=await sb.from('customers').insert({name:$('#cName').value.trim(),phone:$('#cPhone').value.trim()||null,plate:$('#cPlate').value.trim()||null,vehicle:$('#cVehicle').value.trim()||null,notes:$('#cNotes').value.trim()||null,created_by:currentUser.id});if(error)return status($('#customerStatus'),error.message,true);e.target.reset();status($('#customerStatus'),'Customer saved');loadCustomers()});
+
+async function loadQuotes(){
+  const [cr,pr,qr]=await Promise.all([sb.from('customers').select('id,name,plate').order('name'),sb.from('products').select('id,brand,model,size,price').eq('active',true).order('brand'),sb.from('quotes').select('*').order('created_at',{ascending:false})]);
+  if(cr.error||pr.error||qr.error)return status($('#quoteStatus'),(cr.error||pr.error||qr.error).message,true);
+  customers=cr.data||[];products=pr.data||[];quotes=qr.data||[];
+  $('#qCustomer').innerHTML=customers.map(c=>`<option value="${c.id}">${esc(c.name)} ${esc(c.plate||'')}</option>`).join('');
+  $('#qProduct').innerHTML=products.map(p=>`<option value="${p.id}">${esc(p.brand+' '+(p.model||'')+' '+(p.size||''))} · ${money(p.price)}</option>`).join('');
+  $('#quoteRows').innerHTML=quotes.map(q=>`<tr><td>${esc(q.customer_name||'')}</td><td>${esc(q.status)}</td><td>${new Date(q.created_at).toLocaleString()}</td><td>${q.status==='sold'?'':`<button class="btn primary" onclick="markSold('${q.id}')">Mark sold</button>`}</td></tr>`).join('');
+}
+$('#quoteForm').addEventListener('submit',async e=>{
+  e.preventDefault();const c=customers.find(x=>x.id===$('#qCustomer').value),p=products.find(x=>x.id===$('#qProduct').value);if(!c||!p)return;
+  let cost=0;const ir=await sb.from('inventory').select('cost').eq('product_id',p.id).maybeSingle();if(!ir.error&&ir.data)cost=+ir.data.cost||0;
+  const q=await sb.from('quotes').insert({customer_id:c.id,customer_name:c.name,plate:c.plate,staff_id:currentUser.id,extra:+$('#qExtra').value||0,status:'sent'}).select('id').single();
+  if(q.error)return status($('#quoteStatus'),q.error.message,true);
+  const qi=await sb.from('quote_items').insert({quote_id:q.data.id,product_id:p.id,description:`${p.brand} ${p.model||''} ${p.size||''}`,qty:+$('#qQty').value||1,unit_price:+p.price||0,unit_cost:cost});
+  if(qi.error)return status($('#quoteStatus'),qi.error.message,true);status($('#quoteStatus'),'Quote created');loadQuotes();
+});
+window.markSold=async id=>{
+  const q=quotes.find(x=>x.id===id);if(!q)return;
+  const sr=await sb.from('sales').insert({quote_id:id,staff_id:q.staff_id||currentUser.id,total_amount:0,gross_profit:0,commission_rate:10});if(sr.error)return alert(sr.error.message);
+  await sb.from('quotes').update({status:'sold'}).eq('id',id);loadQuotes();
+};
+
+async function loadSales(){
+  const {data,error}=await sb.from('sales').select('*').order('created_at',{ascending:false});if(error){$('#salesRows').innerHTML=`<tr><td colspan="4" class="err">${esc(error.message)}</td></tr>`;return}
+  $('#salesRows').innerHTML=(data||[]).map(s=>`<tr><td>${new Date(s.created_at).toLocaleString()}</td><td>${money(s.total_amount)}</td><td>${money(s.gross_profit)}</td><td><b>${money(s.commission_amount)}</b></td></tr>`).join('');
+}
+$('#refreshSales').onclick=loadSales;
+
+(async function boot(){
+  const {data}=await sb.auth.getSession();
+  if(data.session){currentUser=data.session.user;try{await getProfile();showApp()}catch(e){await sb.auth.signOut();showLogin()}}
+  else showLogin();
+})();
+</script>
+</body>
+</html>
