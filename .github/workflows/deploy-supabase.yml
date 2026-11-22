@@ -25,4 +25,4 @@ jobs:
       - name: Deploy customer-auth
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase functions deploy customer-auth --project-ref wkjkiunuiemwbxjtrddq
+        run: supabase functions deploy customer-auth --project-ref wkjkiunuiemwbxjtrddq --yes
