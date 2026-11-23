@@ -22,10 +22,11 @@
 #loginView .card button.primary,#loginView .card button.dark{background:linear-gradient(180deg,#ffa51b,#e86600);color:#fff}
 #loginView .card button.soft{background:#22232a;color:#fff;border:1px solid #777}
 #loginView input::placeholder{color:#b8b8b8}
-/* Mobile poster: show entire image above login form without cropping */
+/* Mobile login: black/orange poster, no white gaps, readable overlay */
+html,body{min-height:100%;background:#101010}
 @media(max-width:600px){
-  #loginView.login{background-size:100% auto;background-position:center top;background-repeat:no-repeat;min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:150vw 14px 24px}
-  #loginView.login .card{margin:0 auto;max-width:440px}
+  #loginView.login{background-color:#101010;background-image:url('login-poster.jpg');background-size:100% auto;background-position:center top;background-repeat:no-repeat;min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:82vw 14px 30px}
+  #loginView.login .card{margin:0 auto;max-width:440px;background:linear-gradient(155deg,rgba(12,12,15,.96),rgba(26,21,19,.97))}
 }
 </style></head><body>
 <section id="loginView" class="login"><div class="card"><h1>Klang Hock Li Tyre Services Sdn Bhd</h1><p class="muted">Tyres · Rims · Services</p><div class="tabs"><button id="staffTab" class="on" type="button">Staff Login</button><button id="customerTab" type="button">Customer Register / Login</button></div>
