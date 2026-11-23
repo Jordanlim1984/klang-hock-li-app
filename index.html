@@ -22,6 +22,11 @@
 #loginView .card button.primary,#loginView .card button.dark{background:linear-gradient(180deg,#ffa51b,#e86600);color:#fff}
 #loginView .card button.soft{background:#22232a;color:#fff;border:1px solid #777}
 #loginView input::placeholder{color:#b8b8b8}
+/* Mobile poster: show entire image above login form without cropping */
+@media(max-width:600px){
+  #loginView.login{background-size:100% auto;background-position:center top;background-repeat:no-repeat;min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:150vw 14px 24px}
+  #loginView.login .card{margin:0 auto;max-width:440px}
+}
 </style></head><body>
 <section id="loginView" class="login"><div class="card"><h1>Klang Hock Li Tyre Services Sdn Bhd</h1><p class="muted">Tyres · Rims · Services</p><div class="tabs"><button id="staffTab" class="on" type="button">Staff Login</button><button id="customerTab" type="button">Customer Register / Login</button></div>
 <form id="loginForm"><div id="nameField" class="hidden"><label>Customer Name</label><input id="displayName" autocomplete="name"></div><label>Login ID / Email</label><input id="loginId" value="Hockli" autocomplete="username" required><label>Password</label><input id="password" type="password" autocomplete="current-password" required><button id="loginButton" class="dark full">Staff Login</button></form><button id="signupButton" class="soft full hidden" style="margin-top:8px">Register New Customer</button><div id="loginStatus" class="status small"></div><button id="testConnection" class="soft">Test Connection</button><div id="connectionStatus" class="status small"></div></div></section>
