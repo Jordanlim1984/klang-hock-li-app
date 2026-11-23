@@ -14,6 +14,14 @@
 .login .dark{background:linear-gradient(180deg,#ff9c08,#e96500);color:#fff}
 .login .soft{background:#25252b;color:#fff;border:1px solid #777}
 @media(max-width:600px){.login{background-position:center top;padding:clamp(250px,43vh,460px) 14px 24px}.login .card{padding:20px}}
+
+/* Login-specific overrides: prevent global white tab backgrounds */
+#loginView .tabs{background:transparent;overflow:visible;display:flex;gap:8px;padding:10px 0}
+#loginView .tabs button{flex:1;min-width:0;white-space:normal;background:#202025;color:#f5f5f5;border:1px solid #777;font-size:13px}
+#loginView .tabs button.on{background:linear-gradient(180deg,#ffa51b,#eb6900);color:#fff;border-color:#ffb343}
+#loginView .card button.primary,#loginView .card button.dark{background:linear-gradient(180deg,#ffa51b,#e86600);color:#fff}
+#loginView .card button.soft{background:#22232a;color:#fff;border:1px solid #777}
+#loginView input::placeholder{color:#b8b8b8}
 </style></head><body>
 <section id="loginView" class="login"><div class="card"><h1>Klang Hock Li Tyre Services Sdn Bhd</h1><p class="muted">Tyres · Rims · Services</p><div class="tabs"><button id="staffTab" class="on" type="button">Staff Login</button><button id="customerTab" type="button">Customer Register / Login</button></div>
 <form id="loginForm"><div id="nameField" class="hidden"><label>Customer Name</label><input id="displayName" autocomplete="name"></div><label>Login ID / Email</label><input id="loginId" value="Hockli" autocomplete="username" required><label>Password</label><input id="password" type="password" autocomplete="current-password" required><button id="loginButton" class="dark full">Staff Login</button></form><button id="signupButton" class="soft full hidden" style="margin-top:8px">Register New Customer</button><div id="loginStatus" class="status small"></div><button id="testConnection" class="soft">Test Connection</button><div id="connectionStatus" class="status small"></div></div></section>
