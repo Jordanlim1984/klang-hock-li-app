@@ -41,6 +41,15 @@ html,body{min-height:100%;background:#101010}
  #loginView .card button.full{padding:10px 12px}
  #loginView .status{margin:6px 0}
 }
+/* Uniform catalog cards and product image display */
+#catalogGrid{align-items:stretch}
+#catalogGrid .card{min-width:0;overflow:hidden;display:flex;flex-direction:column;gap:9px;margin:0}
+#catalogGrid .photo{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;object-position:center;background:#f4f4f4;border-radius:10px}
+#catalogGrid h3,#catalogGrid p{margin:0;overflow-wrap:anywhere}
+#catalogGrid h3{font-size:17px;line-height:1.35}
+#catalogGrid .price{font-size:20px}
+#catalogGrid .btn{margin-top:auto;align-self:flex-start}
+@media(max-width:600px){#catalogGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#catalogGrid .card{padding:10px;gap:7px}#catalogGrid h3{font-size:14px}#catalogGrid p{font-size:12px;line-height:1.4}#catalogGrid .price{font-size:16px!important}#catalogGrid .btn{font-size:12px;padding:9px 8px}}
 </style></head><body>
 <section id="loginView" class="login"><div class="card"><h1>Klang Hock Li Tyre Services Sdn Bhd</h1><p class="muted">Tyres · Rims · Services</p><div class="tabs"><button id="staffTab" class="on" type="button">Staff Login</button><button id="customerTab" type="button">Customer Register / Login</button></div>
 <form id="loginForm"><div id="nameField" class="hidden"><label>Customer Name</label><input id="displayName" autocomplete="name"></div><label>Login ID / Email</label><input id="loginId" value="Hockli" autocomplete="username" required><label>Password</label><input id="password" type="password" autocomplete="current-password" required><button id="loginButton" class="dark full">Staff Login</button></form><button id="signupButton" class="soft full hidden" style="margin-top:8px">Register New Customer</button><div id="loginStatus" class="status small"></div><button id="testConnection" class="soft">Test Connection</button><div id="connectionStatus" class="status small"></div></div></section>
