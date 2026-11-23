@@ -4,32 +4,16 @@
 *{box-sizing:border-box}body{margin:0;font:15px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:#f5f6f8;color:#171717}.hidden{display:none!important}.login{min-height:100dvh;background:#161616;display:grid;place-items:center;padding:15px}.card{background:white;border-radius:15px;padding:18px;margin:12px 0;box-shadow:0 2px 9px #0000000b}.login .card{width:min(100%,470px);padding:25px}h1{margin:0 0 5px}h2{font-size:21px}label{display:block;font-weight:600;margin:12px 0 5px}input,select,textarea{display:block;width:100%;padding:12px;border:1px solid #d1d5db;border-radius:9px;font:inherit}button,.btn{border:0;border-radius:9px;padding:11px 13px;font:inherit;font-weight:650;cursor:pointer;text-decoration:none;display:inline-block}.primary{background:#f47a00;color:#fff}.dark{background:#171717;color:#fff}.soft{background:#eef0f3;color:#222}.full{width:100%}.muted{color:#667085}.small{font-size:13px}.status{margin:10px 0;overflow-wrap:anywhere;white-space:pre-wrap}.err{color:#b42318}.ok{color:#067647}.tabs,.nav{display:flex;gap:5px;overflow-x:auto;padding:8px;background:#fff}.tabs button,.nav button{background:#f5f5f5;white-space:nowrap}.tabs button.on,.nav button.on{background:#fff0e2;color:#b45400}.top{background:#f47a00;color:white;padding:18px}.top h1{margin:0}.wrap{max-width:1000px;margin:auto;padding:12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.split{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}.photo{width:100%;aspect-ratio:4/3;object-fit:cover;background:#eee;border-radius:8px}.price{color:#d45f00;font-size:20px;font-weight:800}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #e5e7eb;padding:9px 6px;text-align:left;vertical-align:top}@media(max-width:600px){.row{grid-template-columns:1fr}}
 .login{background:#101010 url('login-poster.jpg') center top / cover no-repeat;align-items:center}.login .card{background:rgba(255,255,255,.97);box-shadow:0 10px 35px #0008}.top{background:#111 url('home-banner.jpg') center center / cover no-repeat;min-height:clamp(170px,30vw,370px);display:flex;align-items:end;text-shadow:0 2px 9px #000}.top .split{width:100%;background:#0009;border-radius:10px;padding:10px}.top h1{font-size:clamp(18px,2.5vw,30px)}@media(max-width:600px){.login{background-position:center top}.login .card{margin-top:140px}.top{min-height:180px}}
 
-/* Mobile login layout fix */
-.login {
-  min-height: 100dvh;
-  height: auto;
-  background-position: center top;
-  background-size: cover;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 24px 14px 32px;
-}
-
-.login .card {
-  position: relative;
-  width: 100%;
-  max-width: 440px;
-  margin: 0 auto;
-  height: auto;
-  z-index: 1;
-}
-
-@media (max-width: 600px) {
-  .login .card {
-    padding: 20px;
-  }
-}
+/* Responsive orange-black login layout */
+.login{min-height:100vh;min-height:100dvh;height:auto;background:#101010 url('login-poster.jpg') center top/cover no-repeat;display:flex;align-items:flex-end;justify-content:center;padding:clamp(220px,45vh,520px) 16px 32px}
+.login .card{position:relative;width:100%;max-width:440px;height:auto;margin:0 auto;padding:24px;border:1px solid rgba(255,144,26,.7);border-radius:22px;color:#fff;background:linear-gradient(155deg,rgba(12,12,15,.94),rgba(26,21,19,.96));box-shadow:0 0 24px rgba(255,119,0,.28),0 18px 44px rgba(0,0,0,.65);z-index:1}
+.login .card h1{font-size:clamp(20px,5vw,27px);line-height:1.2;color:#fff}
+.login .card .muted{color:#c9cbd1}
+.login input{background:#242428;border:1px solid #686868;color:#fff}
+.login input:focus{outline:2px solid #ff8a00;outline-offset:1px}
+.login .dark{background:linear-gradient(180deg,#ff9c08,#e96500);color:#fff}
+.login .soft{background:#25252b;color:#fff;border:1px solid #777}
+@media(max-width:600px){.login{background-position:center top;padding:clamp(250px,43vh,460px) 14px 24px}.login .card{padding:20px}}
 </style></head><body>
 <section id="loginView" class="login"><div class="card"><h1>Klang Hock Li Tyre Services Sdn Bhd</h1><p class="muted">Tyres · Rims · Services</p><div class="tabs"><button id="staffTab" class="on" type="button">Staff Login</button><button id="customerTab" type="button">Customer Register / Login</button></div>
 <form id="loginForm"><div id="nameField" class="hidden"><label>Customer Name</label><input id="displayName" autocomplete="name"></div><label>Login ID / Email</label><input id="loginId" value="Hockli" autocomplete="username" required><label>Password</label><input id="password" type="password" autocomplete="current-password" required><button id="loginButton" class="dark full">Staff Login</button></form><button id="signupButton" class="soft full hidden" style="margin-top:8px">Register New Customer</button><div id="loginStatus" class="status small"></div><button id="testConnection" class="soft">Test Connection</button><div id="connectionStatus" class="status small"></div></div></section>
