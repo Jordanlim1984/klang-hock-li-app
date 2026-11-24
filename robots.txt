@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jordanlim1984.github.io/klang-hock-li-app/sitemap.xml
