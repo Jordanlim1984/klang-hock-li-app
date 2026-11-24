@@ -1,0 +1,31 @@
+name: Update public product SEO
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+  push:
+    paths:
+      - 'scripts/build-catalog.mjs'
+      - '.github/workflows/catalog-seo.yml'
+permissions:
+  contents: write
+concurrency:
+  group: catalog-seo
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/build-catalog.mjs
+      - name: Commit generated public pages
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add products sitemap.xml
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Refresh public product SEO pages"
+          git push
